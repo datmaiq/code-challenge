@@ -1,10 +1,8 @@
-# Getting Started with Create React App
+# Currency Swap Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
-
-In the project directory, you can run:
+Welcome to the Currency Swap project! This coding challenge, created for Tech 99, demonstrates a feature to swap tokens with exchange rates. I developed this project to showcase my skills and passion for joining Tech 99.
 
 ### `npm start`
 

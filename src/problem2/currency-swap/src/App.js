@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import loadTokenImages from "./loadTokenImages";
 import TokenModal from "./components/TokenModal";
 import Navbar from "./components/Navbar";
-import Notification from "./components/Notification"; // Import Notification component
+import Notification from "./components/Notification";
+import ErrorAlert from "./components/ErrorAlert";
 
 const App = () => {
+  // State management for various data and UI states
   const [prices, setPrices] = useState({});
   const [fromToken, setFromToken] = useState("eth");
   const [toToken, setToToken] = useState("usd");
@@ -16,8 +18,10 @@ const App = () => {
   const [isToTokenModalOpen, setIsToTokenModalOpen] = useState(false);
   const [recentSwap, setRecentSwap] = useState({ token: "USD", amount: 0 });
   const [isSwapping, setIsSwapping] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [notificationMessage, setNotificationMessage] = useState("");
 
+  // Fetch prices and load images on component mount
   useEffect(() => {
     const fetchPrices = async () => {
       try {
@@ -38,65 +42,79 @@ const App = () => {
         const images = loadTokenImages(validTokens);
         setTokenImages(images);
       } catch (error) {
-        setNotificationMessage("Failed to fetch token prices.");
-        setTimeout(() => setNotificationMessage(""), 3000); // Hide message after 3 seconds
+        setErrorMessage("Failed to fetch token prices.");
+        setTimeout(() => setErrorMessage(""), 3000);
       }
     };
 
     fetchPrices();
   }, []);
-
+  // Memoized callback to update Amount
   useEffect(() => {
     if (prices[fromToken] && prices[toToken]) {
       setToAmount(
-        Number(((fromAmount * prices[fromToken]) / prices[toToken]).toFixed(5))
+        Number(((fromAmount * prices[fromToken]) / prices[toToken]).toFixed(1))
       );
     }
   }, [prices, fromToken, toToken, fromAmount]);
 
-  const updateToAmount = (fromAmount) => {
-    if (prices[fromToken] && prices[toToken]) {
-      setToAmount(
-        Number(((fromAmount * prices[fromToken]) / prices[toToken]).toFixed(8))
-      );
-    }
-  };
+  const updateToAmount = useCallback(
+    (fromAmount) => {
+      if (prices[fromToken] && prices[toToken]) {
+        setToAmount(
+          Number(
+            ((fromAmount * prices[fromToken]) / prices[toToken]).toFixed(8)
+          )
+        );
+      }
+    },
+    [prices, fromToken, toToken]
+  );
 
-  const updateFromAmount = (toAmount) => {
-    if (prices[fromToken] && prices[toToken]) {
-      setFromAmount(
-        Number(((toAmount * prices[toToken]) / prices[fromToken]).toFixed(8))
-      );
-    }
-  };
+  const updateFromAmount = useCallback(
+    (toAmount) => {
+      if (prices[fromToken] && prices[toToken]) {
+        setFromAmount(
+          Number(((toAmount * prices[toToken]) / prices[fromToken]).toFixed(8))
+        );
+      }
+    },
+    [prices, fromToken, toToken]
+  );
+  // Handle change input,output
+  const handleFromAmountChange = useCallback(
+    (e) => {
+      let value = e.target.value.replace(/^0+(?=\d)/, "");
+      value = parseFloat(value) || 0;
+      if (value < 0) return;
+      setFromAmount(value);
+      updateToAmount(value);
+    },
+    [updateToAmount]
+  );
 
-  const handleFromAmountChange = (e) => {
-    let value = e.target.value.replace(/^0+(?=\d)/, "");
-    value = parseFloat(value) || 0;
-    if (value < 0) return;
-    setFromAmount(value);
-    updateToAmount(value);
-  };
-
-  const handleToAmountChange = (e) => {
-    let value = e.target.value.replace(/^0+(?=\d)/, "");
-    value = parseFloat(value) || 0;
-    if (value < 0) return;
-    setToAmount(value);
-    updateFromAmount(value);
-  };
-
-  const handleFromTokenChange = (token) => {
+  const handleToAmountChange = useCallback(
+    (e) => {
+      let value = e.target.value.replace(/^0+(?=\d)/, "");
+      value = parseFloat(value) || 0;
+      if (value < 0) return;
+      setToAmount(value);
+      updateFromAmount(value);
+    },
+    [updateFromAmount]
+  );
+  //handle token select change
+  const handleFromTokenChange = useCallback((token) => {
     setFromToken(token);
     setIsFromTokenModalOpen(false);
-  };
+  }, []);
 
-  const handleToTokenChange = (token) => {
+  const handleToTokenChange = useCallback((token) => {
     setToToken(token);
     setIsToTokenModalOpen(false);
-  };
-
-  const handleSwap = () => {
+  }, []);
+  // Handle token swap
+  const handleSwap = useCallback(() => {
     if (prices[fromToken] && prices[toToken]) {
       setIsSwapping(true);
 
@@ -104,18 +122,23 @@ const App = () => {
         setRecentSwap({ token: toToken, amount: toAmount });
         setIsSwapping(false);
         setNotificationMessage("Swap successful!");
-        setTimeout(() => setNotificationMessage(""), 3000); // Hide message after 3 seconds
+        setTimeout(() => setNotificationMessage(""), 3000);
       }, 1000);
     } else {
-      setNotificationMessage("Invalid token prices for swap.");
-      setTimeout(() => setNotificationMessage(""), 3000); // Hide message after 3 seconds
+      setErrorMessage("Invalid token prices for swap.");
+      setTimeout(() => setErrorMessage(""), 3000);
     }
-  };
+  }, [prices, fromToken, toToken, toAmount]);
 
-  const getTokenImage = (symbol) => {
-    return tokenImages[symbol.toLowerCase()] || "";
-  };
+  // Get token image based on token symbol
+  const getTokenImage = useCallback(
+    (symbol) => {
+      return tokenImages[symbol.toLowerCase()] || "";
+    },
+    [tokenImages]
+  );
 
+  // Determine if the swap button should be disabled
   const isSwapDisabled = !prices[fromToken] || !prices[toToken] || isSwapping;
 
   return (
@@ -127,6 +150,7 @@ const App = () => {
           <h3 className="text-purple-500 font-kanit px-5 font-extrabold leading-6 text-xl text-start">
             99Tech Swap
           </h3>
+
           <h5 className="text-gray-500 font-kanit pb-5 mt-1 mb-5 px-5 font-bold leading-6 text-sm text-start border-b-2">
             Be part of the future of marketing
           </h5>
@@ -194,10 +218,18 @@ const App = () => {
             prices={prices}
           />
         </div>
-        <Notification
-          message={notificationMessage}
-          onClose={() => setNotificationMessage("")}
-        />
+        {errorMessage && (
+          <ErrorAlert
+            message={errorMessage}
+            onClose={() => setErrorMessage("")}
+          />
+        )}
+        {notificationMessage && (
+          <Notification
+            message={notificationMessage}
+            onClose={() => setNotificationMessage("")}
+          />
+        )}
       </div>
     </div>
   );
