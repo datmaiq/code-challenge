@@ -5,7 +5,7 @@ import TokenModal from "./components/TokenModal";
 import Navbar from "./components/Navbar";
 import Notification from "./components/Notification";
 import ErrorAlert from "./components/ErrorAlert";
-
+import "./App.css"; // Ensure you import the CSS file
 const App = () => {
   // State management for various data and UI states
   const [prices, setPrices] = useState({});
@@ -53,7 +53,7 @@ const App = () => {
   useEffect(() => {
     if (prices[fromToken] && prices[toToken]) {
       setToAmount(
-        Number(((fromAmount * prices[fromToken]) / prices[toToken]).toFixed(1))
+        Number(((fromAmount * prices[fromToken]) / prices[toToken]).toFixed(5))
       );
     }
   }, [prices, fromToken, toToken, fromAmount]);
@@ -82,27 +82,41 @@ const App = () => {
     [prices, fromToken, toToken]
   );
   // Handle change input,output
+  // Handle change input,output
   const handleFromAmountChange = useCallback(
     (e) => {
-      let value = e.target.value.replace(/^0+(?=\d)/, "");
-      value = parseFloat(value) || 0;
-      if (value < 0) return;
-      setFromAmount(value);
-      updateToAmount(value);
+      let value = e.target.value;
+
+      // Allow only numeric values and a single decimal point
+      if (/^\d*\.?\d*$/.test(value)) {
+        setFromAmount(value);
+
+        // Update toAmount only if value is a valid number
+        if (value !== "") {
+          updateToAmount(parseFloat(value) || 0);
+        }
+      }
     },
     [updateToAmount]
   );
 
   const handleToAmountChange = useCallback(
     (e) => {
-      let value = e.target.value.replace(/^0+(?=\d)/, "");
-      value = parseFloat(value) || 0;
-      if (value < 0) return;
-      setToAmount(value);
-      updateFromAmount(value);
+      let value = e.target.value;
+
+      // Allow only numeric values and a single decimal point
+      if (/^\d*\.?\d*$/.test(value)) {
+        setToAmount(value);
+
+        // Update fromAmount only if value is a valid number
+        if (value !== "") {
+          updateFromAmount(parseFloat(value) || 0);
+        }
+      }
     },
     [updateFromAmount]
   );
+
   //handle token select change
   const handleFromTokenChange = useCallback((token) => {
     setFromToken(token);
@@ -137,7 +151,7 @@ const App = () => {
     },
     [tokenImages]
   );
-
+  console.log(fromAmount);
   // Determine if the swap button should be disabled
   const isSwapDisabled = !prices[fromToken] || !prices[toToken] || isSwapping;
 
