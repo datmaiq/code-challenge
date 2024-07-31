@@ -6,9 +6,50 @@
 
 Welcome to the Currency Swap project! This coding challenge, created for Tech 99, demonstrates a feature to swap tokens with exchange rates. I developed this project to showcase my skills and passion for joining Tech 99.
 
-## Decimal Precision
+### Important Note
 
-In the field of cryptocurrency, values often have many decimal places. To ensure accurate calculations and display, the application uses 5 decimal places for USD values and cryptocurrency prices. This level of precision is crucial to accurately represent and process small fluctuations in cryptocurrency prices, similar to the precision used by platforms like PancakeSwap. By maintaining high decimal precision, we ensure that users receive the most accurate financial information possible.
+- **Static Data:** The data from this API has not changed in over a year, meaning it is static and does not reflect real-time price changes.
+- **Fetch Once:** Due to the static nature of the data, the application only fetches the prices once during the initial load.
+- **Decimal Precision:** In the field of cryptocurrency, values often have many decimal places. To ensure accurate calculations and display, the application uses 5 decimal places for USD values and cryptocurrency prices. This level of precision is crucial to accurately represent and process small fluctuations in cryptocurrency prices, similar to the precision used by platforms like PancakeSwap. By maintaining high decimal precision, we ensure that users receive the most accurate financial information possible.
+
+## Considerations for Real-Time Data
+
+If the token prices were to change frequently, the application should fetch the latest prices whenever the user enters an input or initiates a swap. This can be done by moving the price-fetching logic into the relevant event handlers:
+
+```javascript
+const fetchLatestPrices = async () => {
+  try {
+    const response = await axios.get(
+      "https://interview.switcheo.com/prices.json"
+    );
+    const pricesData = response.data.reduce((acc, token) => {
+      if (token.price > 0) {
+        acc[token.currency.toLowerCase()] = token.price;
+      }
+      return acc;
+    }, {});
+    setPrices(pricesData);
+  } catch (error) {
+    setErrorMessage("Failed to fetch token prices.");
+    setTimeout(() => setErrorMessage(""), 3000);
+  }
+};
+
+const handleFromAmountChange = useCallback(
+  async (e) => {
+    await fetchLatestPrices();
+    let value = e.target.value;
+
+    if (/^\d*\.?\d*$/.test(value)) {
+      setFromAmount(value);
+      if (value !== "") {
+        updateToAmount(parseFloat(value) || 0);
+      }
+    }
+  },
+  [updateToAmount]
+);
+```
 
 ### Token Swap Features
 
