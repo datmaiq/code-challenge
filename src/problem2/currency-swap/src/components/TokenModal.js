@@ -17,9 +17,9 @@ const TokenModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-5 rounded-lg shadow-lg w-80">
+      <div className="bg-white p-5 rounded-2xl shadow-lg w-80">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Select a Token</h2>
+          <h2 className="text-xl text-purple-500  font-bold">Select a Token</h2>
           <button onClick={onClose} className="text-xl">
             &times;
           </button>
@@ -29,7 +29,7 @@ const TokenModal = ({
           placeholder="Search token"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full p-2 border rounded mb-4"
+          className="w-full p-2 bg-pink-bg  p-2 border border-purple-300 rounded mb-4"
         />
         <ul className="max-h-60 overflow-y-auto">
           {filteredTokens.map((token) => (

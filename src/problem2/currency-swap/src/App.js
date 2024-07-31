@@ -5,18 +5,19 @@ import TokenModal from "./components/TokenModal";
 import Navbar from "./components/Navbar";
 import Notification from "./components/Notification";
 import ErrorAlert from "./components/ErrorAlert";
-import "./App.css"; // Ensure you import the CSS file
+import logo99Tech from "./assets/logo/99Tech.png";
+
 const App = () => {
   // State management for various data and UI states
   const [prices, setPrices] = useState({});
-  const [fromToken, setFromToken] = useState("eth");
-  const [toToken, setToToken] = useState("usd");
+  const [fromToken, setFromToken] = useState("wbtc");
+  const [toToken, setToToken] = useState("busd");
   const [fromAmount, setFromAmount] = useState(1);
   const [toAmount, setToAmount] = useState(0);
   const [tokenImages, setTokenImages] = useState({});
   const [isFromTokenModalOpen, setIsFromTokenModalOpen] = useState(false);
   const [isToTokenModalOpen, setIsToTokenModalOpen] = useState(false);
-  const [recentSwap, setRecentSwap] = useState({ token: "USD", amount: 0 });
+  const [recentSwap, setRecentSwap] = useState({ token: "busd", amount: 0 });
   const [isSwapping, setIsSwapping] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [notificationMessage, setNotificationMessage] = useState("");
@@ -49,11 +50,12 @@ const App = () => {
 
     fetchPrices();
   }, []);
+
   // Memoized callback to update Amount
   useEffect(() => {
     if (prices[fromToken] && prices[toToken]) {
       setToAmount(
-        Number(((fromAmount * prices[fromToken]) / prices[toToken]).toFixed(5))
+        Number(((fromAmount * prices[fromToken]) / prices[toToken]).toFixed(1))
       );
     }
   }, [prices, fromToken, toToken, fromAmount]);
@@ -63,7 +65,7 @@ const App = () => {
       if (prices[fromToken] && prices[toToken]) {
         setToAmount(
           Number(
-            ((fromAmount * prices[fromToken]) / prices[toToken]).toFixed(8)
+            ((fromAmount * prices[fromToken]) / prices[toToken]).toFixed(5)
           )
         );
       }
@@ -75,14 +77,14 @@ const App = () => {
     (toAmount) => {
       if (prices[fromToken] && prices[toToken]) {
         setFromAmount(
-          Number(((toAmount * prices[toToken]) / prices[fromToken]).toFixed(8))
+          Number(((toAmount * prices[toToken]) / prices[fromToken]).toFixed(5))
         );
       }
     },
     [prices, fromToken, toToken]
   );
-  // Handle change input,output
-  // Handle change input,output
+
+  // Handle change input, output
   const handleFromAmountChange = useCallback(
     (e) => {
       let value = e.target.value;
@@ -117,7 +119,7 @@ const App = () => {
     [updateFromAmount]
   );
 
-  //handle token select change
+  // Handle token select change
   const handleFromTokenChange = useCallback((token) => {
     setFromToken(token);
     setIsFromTokenModalOpen(false);
@@ -127,8 +129,15 @@ const App = () => {
     setToToken(token);
     setIsToTokenModalOpen(false);
   }, []);
+
   // Handle token swap
   const handleSwap = useCallback(() => {
+    if (fromAmount === 0 || toAmount === 0) {
+      setErrorMessage("Amount must be greater than zero.");
+      setTimeout(() => setErrorMessage(""), 3000);
+      return;
+    }
+
     if (prices[fromToken] && prices[toToken]) {
       setIsSwapping(true);
 
@@ -142,7 +151,7 @@ const App = () => {
       setErrorMessage("Invalid token prices for swap.");
       setTimeout(() => setErrorMessage(""), 3000);
     }
-  }, [prices, fromToken, toToken, toAmount]);
+  }, [prices, fromToken, toToken, fromAmount, toAmount]);
 
   // Get token image based on token symbol
   const getTokenImage = useCallback(
@@ -151,16 +160,16 @@ const App = () => {
     },
     [tokenImages]
   );
-  console.log(fromAmount);
+
   // Determine if the swap button should be disabled
   const isSwapDisabled = !prices[fromToken] || !prices[toToken] || isSwapping;
 
   return (
-    <div className="min-h-screen bg-99-bg bg-cover bg-center">
+    <div className="relative min-h-screen bg-99-bg bg-cover bg-center">
       <Navbar recentSwap={recentSwap} getTokenImage={getTokenImage} />
 
-      <div className="h-screen flex flex-col items-center justify-center">
-        <div className="max-w-md w-1/4 mx-auto py-5 rounded-2xl shadow-lg bg-white mt-6">
+      <div className="h-screen flex flex-col items-center justify-center px-4">
+        <div className="max-w-md w-full md:w-1/2 lg:w-1/3 mx-auto py-5 rounded-2xl shadow-lg bg-white mt-6">
           <h3 className="text-purple-500 font-kanit px-5 font-extrabold leading-6 text-xl text-start">
             99Tech Swap
           </h3>
@@ -172,7 +181,7 @@ const App = () => {
             <div className="flex flex-col items-start">
               <button
                 onClick={() => setIsFromTokenModalOpen(true)}
-                className="p-2 rounded mb-2 flex-grow"
+                className="p-2 rounded bg-gradient-to-r from-blue-400 to-purple-500 text-white rounded-2xl font-bold mb-2  flex items-center justify-center hover:-translate-y-1 hover:shadow-lg"
               >
                 <img
                   src={getTokenImage(fromToken)}
@@ -185,13 +194,13 @@ const App = () => {
                 type="text"
                 value={fromAmount}
                 onChange={handleFromAmountChange}
-                className="p-2 bg-pink-bg h-20 border rounded-2xl flex-grow w-full text-end"
+                className="p-2 bg-pink-bg h-12 md:h-20 border rounded-2xl w-full text-end"
               />
             </div>
             <div className="flex flex-col items-start">
               <button
                 onClick={() => setIsToTokenModalOpen(true)}
-                className="p-2 rounded mb-2 flex-grow"
+                className="p-2 bg-gradient-to-r from-blue-400 to-purple-500 text-white font-bold rounded-2xl mb-2  flex items-center justify-center hover:-translate-y-1 hover:shadow-lg"
               >
                 <img
                   src={getTokenImage(toToken)}
@@ -204,13 +213,13 @@ const App = () => {
                 type="text"
                 value={toAmount}
                 onChange={handleToAmountChange}
-                className="p-2 bg-pink-bg h-20 border rounded-2xl flex-grow w-full text-end"
+                className="p-2 bg-pink-bg h-12 md:h-20 border rounded-2xl w-full text-end"
               />
             </div>
             <div className="text-center mt-4">
               <button
                 onClick={handleSwap}
-                className="px-8 w-full py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-2xl transition-transform transform-gpu hover:-translate-y-1 hover:shadow-lg"
+                className="px-8 w-full py-4 bg-gradient-to-r from-blue-400 to-purple-500 text-white font-bold rounded-2xl transition-transform transform-gpu hover:-translate-y-1 hover:shadow-lg"
                 disabled={isSwapDisabled}
               >
                 {isSwapping ? "Swapping..." : "Swap Token"}
@@ -245,6 +254,16 @@ const App = () => {
           />
         )}
       </div>
+
+      <a
+        href="https://www.99tech.co/"
+        className="absolute py-3 bottom-24 right-4 mr-2 flex items-center bg-purple-500 text-white px-4 py-2 rounded-2xl shadow-lg"
+      >
+        <div className="flex items-center font-bold">Need help?</div>
+        <div className="relative">
+          <img src={logo99Tech} className="h-14" alt="Logo" />
+        </div>
+      </a>
     </div>
   );
 };
