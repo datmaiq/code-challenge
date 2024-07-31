@@ -255,15 +255,17 @@ const App = () => {
         )}
       </div>
 
-      <a
-        href="https://www.99tech.co/"
-        className="absolute py-3 bottom-24 right-4 mr-2 flex items-center bg-purple-500 text-white px-4 py-2 rounded-2xl shadow-lg"
-      >
-        <div className="flex items-center font-bold">Need help?</div>
+      <div className="flex items-center justify-end space-x-2 absolute bottom-24 right-4">
+        <a
+          href="https://www.99tech.co/"
+          className="flex items-center bg-purple-500 text-white px-4 py-4 rounded-2xl shadow-lg"
+        >
+          <div className="font-bold">Need help?</div>
+        </a>
         <div className="relative">
           <img src={logo99Tech} className="h-14" alt="Logo" />
         </div>
-      </a>
+      </div>
     </div>
   );
 };
