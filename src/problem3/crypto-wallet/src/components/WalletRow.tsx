@@ -33,9 +33,9 @@ const WalletRow: React.FC<WalletRowProps> = ({
       <AmountInfo>
         <Amount>Amount: {formattedAmount}</Amount>
         <Price>
-          1 {currency} = ${price.toFixed(2)}
+          1 {currency} = ${price.toFixed(5)}
         </Price>
-        <USDValue>Total: ${usdValue.toFixed(2)}</USDValue>
+        <USDValue>Total: ${usdValue.toFixed(5)}</USDValue>
       </AmountInfo>
     </RowContainer>
   );
@@ -67,12 +67,12 @@ const CurrencyText = styled.div`
 
 const Currency = styled.span`
   font-size: 18px;
-  color: #333;
+  color: #280d5f;
 `;
 
 const Blockchain = styled.span`
   font-size: 14px;
-  color: #888;
+  color: #7a6eaa;
 `;
 
 const AmountInfo = styled.div`
@@ -83,17 +83,21 @@ const AmountInfo = styled.div`
 
 const Amount = styled.span`
   font-size: 18px;
-  color: #333;
+  color: #7745d9;
+  font-weight: bold;
 `;
 
 const Price = styled.span`
   font-size: 16px;
-  color: #666;
+  color: gray;
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 const USDValue = styled.span`
   font-size: 18px;
-  color: #333;
+  color: #161e4d;
+  font-weight: bold;
 `;
 
 export default WalletRow;

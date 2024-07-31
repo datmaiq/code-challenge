@@ -14,11 +14,10 @@ const useWalletBalances = () => {
     const fetchBalances = () => {
       // Mocked data with fixed amounts and assigned blockchains
       const data: WalletBalance[] = [
-        { currency: "BTC", amount: 1.5, blockchain: "Ethereum" }, // Fixed amount for BTC
-        { currency: "ETH", amount: 10, blockchain: "Ethereum" }, // Fixed amount for ETH
-        { currency: "ATOM", amount: 25, blockchain: "Osmosis" }, // Fixed amount for ATOM
-        { currency: "DOT", amount: 40, blockchain: "Ethereum" }, // Fixed amount for DOT
-        { currency: "ADA", amount: 100, blockchain: "Ethereum" }, // Fixed amount for ADA
+        { currency: "ETH", amount: 10.12223, blockchain: "Ethereum" }, // Fixed amount for ETH
+        { currency: "ATOM", amount: 25.10892, blockchain: "Osmosis" }, // Fixed amount for ATOM
+        { currency: "DOT", amount: 40.34891, blockchain: "Ethereum" }, // Fixed amount for DOT
+        { currency: "ADA", amount: 100.21156, blockchain: "Ethereum" }, // Fixed amount for ADA
       ];
 
       setBalances(data);

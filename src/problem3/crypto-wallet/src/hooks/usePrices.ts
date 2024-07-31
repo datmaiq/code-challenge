@@ -10,11 +10,10 @@ const usePrices = () => {
       try {
         // Mocked price data for each currency
         const mockedPrices: { [key: string]: number } = {
-          BTC: 27000, // Example price for Bitcoin in USD
-          ETH: 1700, // Example price for Ethereum in USD
-          ATOM: 10, // Example price for Cosmos in USD
-          DOT: 6, // Example price for Polkadot in USD
-          ADA: 0.5, // Example price for Cardano in USD
+          ETH: 3212.12789,
+          ATOM: 10.2115,
+          DOT: 5.47812,
+          ADA: 10.11112,
         };
 
         setPrices(mockedPrices);

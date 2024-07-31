@@ -1,4 +1,20 @@
-### Issues and Improvements
+# Wallet Page
+
+![Demo Image](src/assets/background/demo.png)
+
+## Features
+
+- Displays wallet balances with detailed information about various cryptocurrencies.
+- Sorts wallet balances according to blockchain priority.
+- Shows the USD value of cryptocurrencies with 5 decimal places of precision.### Issues and Improvements
+
+## Mock Data
+
+Mock data is used to simulate cryptocurrency types and their prices in the application. This helps with development and testing when real API data is not available.
+
+## Decimal Precision
+
+In the field of cryptocurrency, values often have many decimal places. To ensure accurate calculations and display, the application uses 5 decimal places for USD values and cryptocurrency prices. This level of precision is crucial to accurately represent and process small fluctuations in cryptocurrency prices, similar to the precision used by platforms like PancakeSwap. By maintaining high decimal precision, we ensure that users receive the most accurate financial information possible.
 
 #### 1\. Priority Calculation
 
@@ -6,16 +22,16 @@
 
 **Improvement:** Replaced the switch-case with a map lookup, making the function more concise and easier to update if new blockchains need to be added.
 
-```bash
+```typescript
 const getPriority = (blockchain: string): number => {
-const priorities: { [key: string]: number } = {
-  Osmosis: 100,
-  Ethereum: 50,
-  Arbitrum: 30,
-  Zilliqa: 20,
-  Neo: 20,
-};
-return priorities[blockchain] ?? -99;
+  const priorities: { [key: string]: number } = {
+    Osmosis: 100,
+    Ethereum: 50,
+    Arbitrum: 30,
+    Zilliqa: 20,
+    Neo: 20,
+  };
+  return priorities[blockchain] ?? -99;
 };
 ```
 
@@ -27,11 +43,14 @@ return priorities[blockchain] ?? -99;
 
 tsx
 
-```bash
+```typescript
 const sortedBalances = useMemo(() => {
-return balances
-  .filter((balance: WalletBalance) => getPriority(balance.blockchain) > -99 && balance.amount > 0)
-  .sort((a, b) => getPriority(b.blockchain) - getPriority(a.blockchain));
+  return balances
+    .filter(
+      (balance: WalletBalance) =>
+        getPriority(balance.blockchain) > -99 && balance.amount > 0
+    )
+    .sort((a, b) => getPriority(b.blockchain) - getPriority(a.blockchain));
 }, [balances]);
 ```
 
@@ -41,7 +60,7 @@ return balances
 
 **Improvement:** Added a `useMemo` hook to memoize the formatted balances.
 
-```bash
+```typescript
 `const formattedBalances = useMemo(() => {
  return sortedBalances.map((balance: WalletBalance) => ({
    ...balance,
@@ -57,7 +76,7 @@ return balances
 
 **Improvement:** Improved the `key` prop by combining `blockchain` and `currency` to ensure uniqueness.
 
-````bash
+````typescript
 const rows = formattedBalances.map((balance: FormattedWalletBalance) => {
   const usdValue = prices[balance.currency] * balance.amount;
   return (

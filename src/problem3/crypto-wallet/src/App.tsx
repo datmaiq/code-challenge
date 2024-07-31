@@ -3,7 +3,7 @@ import useWalletBalances from "./hooks/useWalletBalances";
 import usePrices from "./hooks/usePrices";
 import WalletRow from "./components/WalletRow";
 import styled from "styled-components";
-
+import myImage from "./assets/background/bg.jpg";
 interface WalletBalance {
   currency: string;
   amount: number;
@@ -17,24 +17,68 @@ interface FormattedWalletBalance extends WalletBalance {
 interface Props extends React.HTMLProps<HTMLDivElement> {}
 
 // Using styled-components for styling
+
+const ScreenContainer = styled.div`
+  width: 100vw;
+  height: 100vh;
+  background-image: url(${myImage});
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const WalletContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
+  width: 90%;
+  max-width: 600px;
+  height: auto;
   padding: 2rem;
-  background: #f9f9f9;
+  background: #efeaf4;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  border-radius: 30px;
+
+  @media (max-width: 768px) {
+    width: 80%;
+    padding: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    width: 95%;
+    padding: 1rem;
+  }
 `;
 
 const Title = styled.h1`
   text-align: center;
   margin-bottom: 2rem;
+  background: linear-gradient(
+    90deg,
+    #f90cff,
+    #6560ff 23%,
+    #0cd7e8 76%,
+    #f90cff
+  );
+  background-size: 200% auto;
+  color: #000;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-animation 3s linear infinite;
+
+  @keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  }
 `;
 
 const WalletPage: React.FC<Props> = (props: Props) => {
   const { children, ...rest } = props;
-  const balances = useWalletBalances(); // Fetching wallet balances
-  const { prices } = usePrices(); // Fetching currency prices
+  const balances = useWalletBalances();
+  const { prices } = usePrices();
 
   const getPriority = (blockchain: string): number => {
     const priorities: { [key: string]: number } = {
@@ -61,7 +105,7 @@ const WalletPage: React.FC<Props> = (props: Props) => {
   const formattedBalances = useMemo(() => {
     return sortedBalances.map((balance: WalletBalance) => ({
       ...balance,
-      formatted: balance.amount.toFixed(2),
+      formatted: balance.amount.toFixed(5),
     }));
   }, [sortedBalances]);
 
@@ -82,10 +126,12 @@ const WalletPage: React.FC<Props> = (props: Props) => {
   });
 
   return (
-    <WalletContainer {...rest}>
-      <Title>Wallet Balances</Title>
-      {rows}
-    </WalletContainer>
+    <ScreenContainer>
+      <WalletContainer {...rest}>
+        <Title>Wallet 99Tech</Title>
+        {rows}
+      </WalletContainer>
+    </ScreenContainer>
   );
 };
 
