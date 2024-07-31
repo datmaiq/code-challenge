@@ -74,13 +74,13 @@ const handleFromAmountChange = useCallback(
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/datmaiq/location-tracking-fe.git
+   git clone https://github.com/datmaiq/code-challenge.git
    ```
 
 2. **Navigate to the Project Directory:**
 
    ```bash
-   cd location-tracking-fe
+   cd currency-swap
    ```
 
 3. **Install Dependencies:**
