@@ -1,13 +1,11 @@
-const importAll = (r, validTokens) => {
-  let images = {};
-  r.keys().forEach((item) => {
-    const key = item.replace("./", "").replace(".svg", "").toLowerCase();
+const importAll = (requireContext, validTokens) =>
+  requireContext.keys().reduce((images, item) => {
+    const key = item.slice(2, -4).toLowerCase();
     if (validTokens.includes(key)) {
-      images[key] = r(item);
+      images[key] = requireContext(item);
     }
-  });
-  return images;
-};
+    return images;
+  }, {});
 
 const loadTokenImages = (validTokens) => {
   const images = importAll(
