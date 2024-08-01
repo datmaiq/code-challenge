@@ -28,7 +28,7 @@ To run the tests:
 4.  Run the tests with the following command:
 
 ```bash
-node test.js
+node index.test.js
 ```
 
 ## Test Cases
